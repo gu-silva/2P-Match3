@@ -1,13 +1,19 @@
 // Importing the required modules
+import express from "express";
 import { WebSocketServer } from "ws"
 import { Match } from "./src/match.js";
 import { Message, Header, Body } from "./src/message.js";
 import { Player } from'./src/player.js';
 import { WaitingRoom } from './src/waitingRoom.js';
- 
-// Creating a new websocket server
-const wss = new WebSocketServer({ port: 8080 })
- 
+
+const PORT = process.env.PORT || 3000;
+const INDEX = '/index.html';
+
+const server = express()
+  .use((req, res) => res.sendFile(INDEX, { root: "./" }))
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+const wss = new WebSocketServer({ server });
 // Creating connection using websocket
 wss.on("connection", ws => {
     console.log("new client connected");
