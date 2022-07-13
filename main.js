@@ -71,7 +71,7 @@ function handleClientMessage(data, socket) {
         case Message.TYPES.keepAlive:
             break;
         default:
-            console.log("Unknown message type, dropping.")
+            console.log(`Unknown message type ${header.type}, dropping.`)
     } 
 
 }

@@ -18,5 +18,8 @@
   "description": "",
   "engines": {
     "node": "16.x"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
   }
 }

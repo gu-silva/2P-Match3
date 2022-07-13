@@ -1,37 +1,21 @@
-import { Config } from "./src/config.js";
 import { Engine } from "./src/engine.js";
 import { State } from "./src/state.js";
 import { Message, Header, Body } from "./src/message.js";
 import { DomHandler } from "./src/domHandler.js";
-import { Board } from "./src/board.js";
 import { CyBorg } from "./src/cyBorg.js";
 
 const ENGINE = new Engine();
 
-// Ask player name
-//let playerName = prompt("What is your name ?");
-//let ws = new WebSocket(Config.webSocketAddress);
-
-//ws.addEventListener('message', eventListener);
-//ws.addEventListener("open", () => {    
-//    console.log("We are connected, registering...");    
-//    let header = new Header(Message.TYPES.register); 
-//    let body = new Body();
-//    body.name = playerName;
-//    let message = Message.newMessage(header, body);
-//    ws.send(message.encode())
-//});
-
 let nickname = "";
 var host = location.origin.replace(/^http/, 'ws');
 let ws = new WebSocket(host);
-let keepAliveInterval = 0;
+let keepAliveInterval = -1;
 
 ws.addEventListener('message', eventListener);
 ws.addEventListener("open", () => {    
     console.log("We are connected, registering...");
     keepAliveInterval = setInterval(() => {
-        let message = Message.newMessage({}, new Header(Message.TYPES.keepAlive));
+        let message = Message.newMessage(new Header(Message.TYPES.keepAlive), {});
         ws.send(message.encode());
     }, 5000);
 });
