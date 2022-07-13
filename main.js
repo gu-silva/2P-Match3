@@ -68,6 +68,8 @@ function handleClientMessage(data, socket) {
         case Message.TYPES.leaveWaitingRoom:
             waitingRoom.remove(body.id);
             break;
+        case Message.TYPES.keepAlive:
+            break;
         default:
             console.log("Unknown message type, dropping.")
     } 

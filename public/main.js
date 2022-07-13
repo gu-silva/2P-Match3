@@ -25,9 +25,15 @@ const ENGINE = new Engine();
 let nickname = "";
 var host = location.origin.replace(/^http/, 'ws');
 let ws = new WebSocket(host);
+let keepAliveInterval = 0;
+
 ws.addEventListener('message', eventListener);
 ws.addEventListener("open", () => {    
     console.log("We are connected, registering...");
+    keepAliveInterval = setInterval(() => {
+        let message = Message.newMessage({}, new Header(Message.TYPES.keepAlive));
+        ws.send(message.encode());
+    }, 5000);
 });
 
 document.getElementById("btn-play").addEventListener("click", () => {
@@ -65,7 +71,7 @@ function eventListener (event) {
     let body = message.body;    
     switch(header.type) {
         case Message.TYPES.registerSuccess:
-            console.log('Registered with success!');        
+            console.log('Registered with success!');            
             window.STATE = new State(body.id, nickname, ws);
             joinMatch();
             break;
@@ -79,7 +85,7 @@ function eventListener (event) {
             state.updateBuffer(body.buffer);
             state.updateOpponentName(body.opponentName);
             ws.removeEventListener("message", eventListener);
-            ENGINE.newGame();
+            ENGINE.newGame();            
         default:
             console.log('Unknown message');
     }

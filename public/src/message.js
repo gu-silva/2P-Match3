@@ -54,7 +54,8 @@ Message.TYPES = {
     startTurn: 'start_turn',
     opponentMove: 'opponent_move',
     updateTileBuffer: 'update_buffer',
-    waitOpponentMove: 'wait_opponent_move'
+    waitOpponentMove: 'wait_opponent_move',
+    keepAlive: 'keep_alive'
 }
 
 export { Message, Header, Body }
