@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { Message, Header, Body } from "./message.js";
+import { Message, Header, Body } from "./../public/src/message.js";
 
 class Player {
     constructor(name, socket) {

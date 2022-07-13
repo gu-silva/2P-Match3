@@ -1,0 +1,49 @@
+body {
+  background-image: url("img/bg.png");
+  background-repeat: repeat-x;
+  background-size: contain;
+}
+
+.tile-0 {
+    background-image: url("img/bunny.gif");
+  }
+  .tile-1 {
+    background-image: url("img/owl.gif");
+  }
+  .tile-2 {
+    background-image: url("img/bear.gif");
+  }
+  .tile-3 {
+    background-image: url("img/badger.gif");
+  }
+  .tile-4 {
+    background-image: url("img/bambi.gif");
+  }
+  .tile-5 {
+    background-image: url("img/buffalo.gif");
+  }
+  
+  .tile-0-kill {
+    background-image: url("img/bunny_kill.png");
+  }
+  .tile-1-kill {
+    background-image: url("img/owl_kill.png");
+  }
+  .tile-2-kill {
+    background-image: url("img/bear_kill.png");
+  }
+  .tile-3-kill {
+    background-image: url("img/badger_kill.png");
+  }
+  .tile-4-kill {
+    background-image: url("img/bambi_kill.png");
+  }
+  .tile-5-kill {
+    background-image: url("img/buffalo_kill.png");
+  }
+  .bomb {
+    background-image: url("img/acorn.png");
+  }
+  .bomb-kill {
+    background-image: url("img/acorn.png");
+  }

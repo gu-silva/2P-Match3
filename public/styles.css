@@ -1,0 +1,287 @@
+body {
+  margin-top: 0.2em;
+  font-family: arial;
+}
+
+.graal-container {
+  display: grid;
+  grid-template-columns: 25% 1fr 25%;
+  grid-template-rows: auto 1fr auto;
+  /*display: flex;*/
+  /*flex-direction: column;*/
+  min-height: 100vh;
+}
+
+@media (min-width: 768px) {
+  .graal-container {
+    margin-left: 10%;
+    width:80%; 
+  }
+  .tile{
+    background-size: 0.9em !important; 
+  }
+  .container {  
+    width:480px !important;
+  }
+  .column {
+    height: 60px !important;
+  }
+}
+
+header {
+  grid-column: span 3;
+  padding-top:1em;
+  text-align: center;
+  margin-bottom: 0.2em;
+}
+
+main {
+  flex: 1;
+  padding: 20px;
+  font-family: monospace;
+  font-size: 1.4em;
+  line-height: 1.3em;
+}
+
+h5 {
+  font-weight: bolder;
+}
+
+.left-panel {
+  padding: 20px;
+}
+ 
+.right-panel {
+  padding: 20px;
+}
+
+footer {
+  grid-column: span 3;
+  padding: 20px;
+  text-align: center;
+  font-size: 0.7em;
+  font-size: 1em;
+  font-weight: 500;
+  color: rgb(8, 8, 105);
+  background: rgb(204, 204, 204); /* Fallback for older browsers without RGBA-support */
+  background: rgba(204, 204, 204, 0.6);
+}
+
+h1 {
+  margin-bottom: 1em;
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+p {
+  margin-bottom: 1.5em;
+}
+
+
+.container {  
+  width:15em;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.column {
+  float: left;
+  width: 12.5%;
+  height: 0.59em;
+  background-color: rgb(16, 21, 21);
+  border: solid 2px;
+  color: rgb(16, 16, 16);
+  font-size:3em;
+}
+.selected {
+  border: solid rgb(225, 225, 225);
+}
+
+.sliding {
+  animation-name: example;
+  animation-duration: 0.05s;
+}
+
+.tile{
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100%;
+  height: 100%;
+  animation: shake 3s;
+  background-size: 0.45em;
+  /* When the animation is finished, start again */
+  animation-iteration-count: infinite;
+}
+
+.kill {
+  animation: zoom-in-zoom-out 0.5s;
+  animation-iteration-count: 1;
+}
+
+.captured {
+  background-color: gold;
+}
+.captured-opponent {
+  background-color: dodgerblue;
+}
+
+@keyframes zoom-in-zoom-out {
+  0% {
+  transform: scale(1, 1);
+  }
+  50% {
+  transform: scale(1.3, 1.3);
+  }
+  100% {
+  transform: scale(1, 1);
+  }
+}
+
+@keyframes example {
+  from {
+  }
+  to {
+    transform: translate(0, var(--slide-size));
+  }
+}
+
+@keyframes shake {
+  0% { transform: translate(0px, 0px) rotate(0deg); }
+  15% { transform: translate(0px, 0px) rotate(0.5deg); }
+  20% { transform: translate(0px, 0px) rotate(1deg); }
+  25% { transform: translate(0px, 0px) rotate(1.5deg); }
+  30% { transform: translate(0px, 0px) rotate(2deg); }
+  35% { transform: translate(0px, 0px) rotate(2.5deg); }
+  40% { transform: translate(0px, 0px) rotate(2deg); }
+  45% { transform: translate(0px, 0px) rotate(1.5deg); }
+  50% { transform: translate(0px, 0px) rotate(1deg); }
+  55% { transform: translate(0px, 0px) rotate(0.5deg); }
+  60% { transform: translate(0px, 0px) rotate(0deg); }
+  65% { transform: translate(0px, 0px) rotate(-0.5deg); }
+  70% { transform: translate(0px, 0px) rotate(-1deg); }
+  75% { transform: translate(0px, 0px) rotate(-1.5deg); }
+  80% { transform: translate(0px, 0px) rotate(-2deg); }
+  85% { transform: translate(0px, 0px) rotate(-1.5deg); }
+  90% { transform: translate(0px, 0px) rotate(-1deg); }
+  95% { transform: translate(0px, 0px) rotate(-0.5deg); }
+  100% { transform: translate(0px, 0px) rotate(0deg); }
+}
+
+.player-container {
+  margin-top: 50%;
+}
+
+.profile-picture {
+  width: 33.33%; 
+  margin-left: 33.33%;
+  margin-top: -30%;
+  position: sticky;
+  transition: all 700ms ease;
+  transition-delay: 1s;
+  z-index: -1;
+}
+
+.player-card {
+  border: 0.2em solid white;
+  outline: 0.1em solid black;
+  border-radius: 5px;
+  text-align: center;
+  padding-top: 1em;
+  background-color: rgb(214, 214, 214);
+}
+
+.player-card p {
+  color: rgb(23, 23, 23);
+  font-size: 1.5em;
+  font-weight:bolder;
+}
+
+.progress-wrapper {
+  height: 30px;
+  max-width: 90%;
+  display: block;
+  margin: auto;
+  margin-bottom: 1em;
+  position: relative;
+  background: #555;
+  padding: 3px;
+  box-shadow: inset 0 -1px 1px rgba(255, 255, 255, 0.3);
+}
+
+.progress {
+  display: block;
+  height: 100%;
+  width: 0px;  
+  position: relative;
+  overflow: hidden;
+  font-size: 15px;
+  transition: all 700ms ease;
+}
+#my-progress {
+  background-color: gold;  
+}
+
+#opponent-progress {
+  background-color: dodgerblue;  
+}
+#header-text {
+  font-size: 1.5em;
+}
+
+.modal {
+	background-color: snow;
+	border-radius: 0.8em;
+	box-shadow: 15px -10px 10px #77a3b8;
+  height: auto;
+}
+
+.modal span {
+  margin-left: 10%;
+  width: 20%;
+  display: inline-block;
+}
+
+input[type=text] {
+  margin-top: 1em;
+  padding: 0.5em 20px;
+  font-size: 1em;
+  box-sizing: border-box;
+  width: 60%;
+}
+
+.txt-error {
+  border-color:red;
+  animation: shake 0.2s;
+  animation-iteration-count: calc(5);
+}
+
+button {
+  padding: 0.5em 20px;
+  margin: 1em 10% 1em;
+  width: 80%;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.time-wrapper {
+  height: 30px;
+  position: relative;
+  background: #555;
+  box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
+  float: left;
+  width:100%;
+  border: solid rgb(16, 21, 21);
+}
+
+.time {
+  display:block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  font-size: 15px;
+  text-align: center;
+  background-color: gold;
+  transition: all 1000ms linear;
+}

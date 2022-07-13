@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>match3</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="res/themes/matchwood/theme.css">
+  </head>
+  <body>
+    <div class="graal-container">
+      <header>
+        <p id="header-text"></p>
+      </header>
+      <div class="left-panel"></div>
+      <main>
+        <div id="modal" class="modal">
+          <div id="nick-name">
+            <span>Nickname:</span>
+            <input id="txt-nickname" placeholder="e.g: @Silva" type="text" maxlength="25"></input>
+            <button id="btn-play">Jogar</button>
+          </div>
+          <div id="waiting-opponent" hidden>
+            <p style="text-align: center;padding: 2em;">Buscando um oponente... </p>
+            <img src="res/progress.gif" style="margin-left: 45%;" width="10%">
+            <p style="text-align: center;padding: 2em;">
+              Você pode <a id="btn-cyborg" href="#">clicar aqui</a> para jogar contra o CyBorg.
+            </p>
+          </div>
+          <div id="post-game" hidden>
+            <p id="txt-post-game" style="text-align: center;padding: 2em;"></p>
+            <button id="btn-play-again">Jogar novamente</button> 
+          </div>
+        </div>  
+        <div class="container">
+          
+        </div>
+      </main>   
+      <div class="right-panel"></div>
+      <footer>Handcrafted with love by Silva®</footer>
+    </div>
+    <script src="main.js" type="module"></script>
+  </body>
+</html>
+

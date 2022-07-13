@@ -1,16 +1,23 @@
 // Importing the required modules
+import path from 'path';
+import {fileURLToPath} from 'url';
 import express from "express";
 import { WebSocketServer } from "ws"
 import { Match } from "./src/match.js";
-import { Message, Header, Body } from "./src/message.js";
+import { Message, Header, Body } from "./public/src/message.js";
 import { Player } from'./src/player.js';
 import { WaitingRoom } from './src/waitingRoom.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
 const INDEX = '/index.html';
 
 const server = express()
-  .use((req, res) => res.sendFile(INDEX, { root: "./" }))
+.use(express.static(__dirname + '/public'))
+  .use((req, res) => res.sendFile(INDEX, { root: __dirname + "/public" }))
+
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 const wss = new WebSocketServer({ server });
