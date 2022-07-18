@@ -76,13 +76,17 @@ class Board {
         }
     }
 
-    swapTileValues(oneCoord, anotherCoord) {
-        let one = this.getTile(oneCoord.x, oneCoord.y);
-        let another = this.getTile(anotherCoord.x, anotherCoord.y);
-        let aux = one.getValue();
-        one.setValue(another.getValue());
-        another.setValue(aux);
-        DomHandler.swapTiles(oneCoord, anotherCoord);
+    swapTiles(oneCoord, anotherCoord) {
+        let one = this.getTile(oneCoord.x, oneCoord.y).clone();
+        let another = this.getTile(anotherCoord.x, anotherCoord.y).clone();
+        this.updateTile(oneCoord.x, oneCoord.y, another);
+        this.updateTile(anotherCoord.x, anotherCoord.y, one);
+        //this.
+        //one = another;
+        //another = aux;
+        //one.setValue(another.getValue());
+        //another.setValue(aux);
+        //DomHandler.swapTiles(oneCoord, anotherCoord);
     }
 
     updateMetaBoard(metaBoard){

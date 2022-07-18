@@ -73,6 +73,9 @@ class Referee {
 							let y = horizontal ? params.y - m : params.x;
 							board.detonateTile(x, y);
 						}						
+                        if (params.y === (Config.w - 1)) {
+                            totalPoints += points;
+                        }
 					} else if (points > 3) {
 						let x = horizontal ? params.x : params.y;
 						let y = horizontal ? params.y : params.x;

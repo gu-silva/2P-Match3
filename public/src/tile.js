@@ -43,6 +43,9 @@ class Tile {
         empty.markAsOutdated();
         return empty;
     }
+    clone() {
+        return Tile.newTile(this.value, this.outdated);
+    }
 }
 
 export { Tile };

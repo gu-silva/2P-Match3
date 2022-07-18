@@ -17,13 +17,14 @@ class Engine {
         document.getElementById("btn-play-again").addEventListener("click", Engine.playAgain);
         let state = window.STATE;
         state.clearState();
-        state.getWebSocket().addEventListener('message', this.eventListener);
         if (state.isAgainstRobot()) {
             DomHandler.endTurn();
             CyBorg.makeMove((move) => {
                 Engine.consolidateMove(move);
                 DomHandler.startTurn();
             });
+        } else {
+            state.getWebSocket().addEventListener('message', this.eventListener);
         }
     }
     eventListener(event) {
@@ -98,13 +99,13 @@ class Engine {
         state.currentTile = secondClicked
     
         let board = state.getBoard();  
-        board.swapTileValues(firstClicked, secondClicked);
+        board.swapTiles(firstClicked, secondClicked);
 
         let match = Referee.lookForMatches(true, state);
         if (!match) {
             console.log('didnt match')
             setTimeout(() => {                
-                board.swapTileValues(firstClicked, secondClicked);
+                board.swapTiles(firstClicked, secondClicked);
                 state.cleanClicks();
                 state.stopProcessing();
             }, 500);            

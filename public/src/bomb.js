@@ -18,6 +18,11 @@ class Bomb extends Tile {
     isEligibleToExplode() {
         return this.bombAge > 1;
     }
+    clone() {
+        let clonedBomb = new Bomb(this.bombAge, this.mine);
+        clonedBomb.outdated = this.outdated;
+        return clonedBomb;
+    }
 }
 
 export { Bomb };
