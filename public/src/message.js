@@ -47,6 +47,7 @@ Message.TYPES = {
     register : 'register',
     joinMatch : 'join_match',
     move: 'move',
+    passTheTurn: 'pass_the_turn',
     leaveWaitingRoom: 'leave_waiting_room',
     registerSuccess : 'register_success',
     waitingInTheRoom : 'waiting_in_the_room',

@@ -15,5 +15,7 @@ class Config {
     static textOpponentsTurn = "Seu oponente está pensando...";
     static textYourTurn = "Agora é sua vez, faça seu movimento!";
     static robotName = "CyBorg";
+    static soundFx = true;
+    static music = true;
 }
 export { Config };

@@ -131,6 +131,7 @@ class Referee {
     static detonateEligibleBomb() {
 		let state = window.STATE;
 		let board = state.getBoard();
+        let detonated = false;
         board.runToEachTile((tile, params) => {
             if (tile instanceof Bomb) {
                 let mine = state.isMyTurn() ? tile.isMine() : !tile.isMine();
@@ -139,11 +140,13 @@ class Referee {
                 }
 
                 if (tile.isEligibleToExplode()) {
+                    detonated = true;
                     this.detonateAround(params.x, params.y, state);
                     return BOARD_CMDS.return;
                 }
             }
-        });        
+        });
+        return detonated;
     }
 
     static detonateAround(x, y, state) {

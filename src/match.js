@@ -63,6 +63,9 @@ class Match {
         whoPlaysNext.opponentMove(move);
         whoWaits.waitOpponentMove();
     }
+    passTheTurn(playerId) {
+        this.relayMove(playerId, { "pass": true });
+    }
 }
 
 export { Match };

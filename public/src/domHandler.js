@@ -12,9 +12,17 @@ const SELECTED_CLASS = "selected"
 
 class DomHandler {
     constructor(){}
+    static bgSong = new Audio("./res/themes/matchwood/sound/song.mp3");
     static cleanBoard() {
         let container = document.getElementsByClassName(CONTAINER_CLASS)[0];
 	    container.innerHTML = "";
+    }
+    static playSong() {
+        DomHandler.bgSong.pause();
+        DomHandler.bgSong.currentTime = 0;
+        DomHandler.bgSong.loop = true;
+        DomHandler.bgSong.volume = 0.15;
+        DomHandler.bgSong.play();
     }
 
     static buildBoard (handleClick) {
@@ -26,7 +34,7 @@ class DomHandler {
             let domTile = this.createTile(params.x, params.y, tile.value, handleClick);
             container.appendChild(domTile);
         });
-        //DomHandler.createTimeBar();
+        DomHandler.createTimeBar();
     }
 
     static createTimeBar() {
@@ -35,6 +43,7 @@ class DomHandler {
         let time = document.createElement("span");
         time.id = "time";
         time.classList.add("time");
+        time.classList.add("no-transition");
         timeWrapper.append(time);
         let container = document.getElementsByClassName(CONTAINER_CLASS)[0];
         container.appendChild(timeWrapper);
@@ -42,36 +51,34 @@ class DomHandler {
 
     static fillTimeBar() {
         let time = document.getElementById("time");
-        time.innerHTML = "";
-        time.style.width = "100%";
-        time.classList.remove("count-down");
+        time.classList.add("no-transition");
+        time.innerHTML = "20";
+        time.style.width = "100%";    
     }
     static cleanTimeBar() {
         let time = document.getElementById("time");
+        //time.classList.add("no-transition");
         time.innerHTML = "";
         time.style.width = "0%";
-        time.classList.remove("count-down");
     }
-    static countDownInterval = 0;
-    static countDownTimeBar() {
-        DomHandler.countDownInterval = setInterval(() => {
-            let time = document.getElementById("time");
-            if (time.innerHTML === "") {
-                time.innerHTML = "20";
-                time.style.width = "100%";
-            } else {
-                let currTime = parseInt(time.innerHTML);
-                if (currTime > 0) {
-                    currTime--;
-                    time.innerHTML = currTime;
-                    time.style.width = (100*currTime)/20 + "%";
-                } else {
-                    console.log("time's up");
-                    clearInterval(DomHandler.countDownInterval);
-                    return
+    static tickTimeBar() {
+        let time = document.getElementById("time");
+        if (time.innerHTML !== "") {
+            time.classList.remove("no-transition")
+            let currTime = parseInt(time.innerHTML);
+            if (currTime > 0) {
+                currTime--;
+                time.innerHTML = currTime;
+                time.style.width = (100*currTime)/20 + "%";
+                if (currTime <= 10) {
+                    for (let i=0; i < 5; i++) {
+                        let randomX = Math.floor(Math.random() * (Config.w - 1));
+                        let randomY = Math.floor(Math.random() * (Config.h - 1));
+                        document.getElementById(`${randomX}_${randomY}`).classList.add("shake");
+                    }
                 }
-            }                
-        }, 1000);        
+            }
+        }
     }
 
     static createTile (x, y, value, handleClick) {
@@ -135,12 +142,15 @@ class DomHandler {
     static killEligibleTiles() {
         let state = window.STATE;
         let board = state.getBoard();
+        let popSoundFx = new Audio("./res/themes/matchwood/sound/pop.wav");
+        popSoundFx.play();
         board.runToEachTile((tile, params) => {
             if (tile.outdated) {
 				let el = this.getTile(params.x, params.y);				
                 this.cleanTileClassList(el.classList);				
 				el.classList.add(KILL_CLASS);
 				el.classList.add(`${Config.avatars[tile.value]}-${KILL_CLASS}`);
+                DomHandler.generateParticles(el);
 			}
         });			
     }
@@ -218,15 +228,21 @@ class DomHandler {
     }
     static startTurn() {
         DomHandler.addYourTurnHeaderText();
-        //DomHandler.fillTimeBar();
-        //DomHandler.countDownTimeBar();
+        DomHandler.fillTimeBar();
         document.getElementById("opponent-picture").style.marginBottom = "-1.8em";
         document.getElementById("my-picture").style.marginBottom = "0em";    
     }
     static endTurn() {
         DomHandler.addOpponentsTurnHeaderText();
-        //DomHandler.cleanTimeBar();
-        //clearInterval(DomHandler.countDownInterval);
+        DomHandler.cleanTimeBar();
+        let selectedTiles = document.getElementsByClassName("selected");
+        for (let i = 0; i < selectedTiles.length; i++) {
+            selectedTiles[i].classList.remove("selected");
+        }
+        let shakingTiles = document.getElementsByClassName("shake");
+        for (let i = 0; i < shakingTiles.length; i++) {
+            shakingTiles[i].classList.remove("shake");
+        }
         document.getElementById("opponent-picture").style.marginBottom = "0em";
         document.getElementById("my-picture").style.marginBottom = "-1.8em";
     }
@@ -310,7 +326,68 @@ class DomHandler {
     static hidePostGameMessage() {
         document.getElementById("post-game").setAttribute("hidden", true);
     }
+    static generateParticles(element) {        
+        //let y = window.scrollY + element.getBoundingClientRect().top + 20;
+        //let x = window.scrollX + element.getBoundingClientRect().left + 20;
+        let y = ((element.getBoundingClientRect().top + element.getBoundingClientRect().bottom) / 2);
+        let x = ((element.getBoundingClientRect().left + element.getBoundingClientRect().right) / 2);
+        setTimeout(() => {
+            pop(x, y);
+        }, 500);
 
-    
+        function pop (x, y) {
+            for (let i = 0; i < 20; i++) {
+            // We call the function createParticle 15 times
+            // As we need the coordinates of the mouse, we pass them as arguments
+                createParticle(x, y);
+            }
+        }
+          
+        function createParticle (x, y) {
+            const particle = document.createElement('particle');
+            document.body.appendChild(particle);
+            
+            // Calculate a random size from 5px to 35px
+            const size = Math.floor(Math.random() * 30 + 5);
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            // Generate a random color in a blue/purple palette
+            particle.style.background = `hsl(${Math.random() * 0 + 130}, 40%, 100%)`;
+            
+            // Generate a random x & y destination within a distance of 75px from the mouse
+            const destinationX = x + (Math.random() - 0.5) * 2 * 75;
+            const destinationY = y + (Math.random() - 0.5) * 2 * 75;
+          
+            // Store the animation in a variable as we will need it later
+            const animation = particle.animate([
+              {
+                // Set the origin position of the particle
+                // We offset the particle with half its size to center it around the mouse
+                transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,
+                opacity: 1
+              },
+              {
+                // We define the final coordinates as the second keyframe
+                transform: `translate(${destinationX}px, ${destinationY}px)`,
+                opacity: 0
+              }
+            ], {
+              // Set a random duration from 500 to 1000ms
+              duration: Math.random() * 500 + 1500,
+              easing: 'cubic-bezier(0, .9, .57, 1)',
+              // Delay every particle with a random value of 200ms
+              delay: Math.random() * 200
+            });
+            
+            // When the animation is complete, remove the element from the DOM
+            animation.onfinish = () => {
+              particle.remove();
+            };
+          }
+    }
+    static playBombSoundFx() {
+        let popSoundFx = new Audio("./res/themes/matchwood/sound/double_pop.wav");
+        popSoundFx.play();
+    }
 }
 export { DomHandler };

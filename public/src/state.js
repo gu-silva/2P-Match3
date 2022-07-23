@@ -11,6 +11,8 @@ class State {
         this.playerName = playerName;    
         this.ws = ws;
         this.playingAgainstRobot = false;
+        this.turnInterval = -1;
+        this.timeLeft = 20;
     }
 
     clearState() {
@@ -52,6 +54,7 @@ class State {
     }
     startTurn() {
         this.myTurn = true;
+        this.timeLeft = 20;
     }
     finishTurn() {
         this.myTurn = false;

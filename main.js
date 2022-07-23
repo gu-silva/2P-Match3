@@ -70,6 +70,9 @@ function handleClientMessage(data, socket) {
             break;
         case Message.TYPES.keepAlive:
             break;
+        case Message.TYPES.passTheTurn:
+            passTheTurn(body.id);
+            break;
         default:
             console.log(`Unknown message type ${header.type}, dropping.`)
     } 
@@ -109,10 +112,26 @@ function joinMatch(playerId) {
 }
 
 function handleMove(playerId, move) {
+    let match = getMatch(playerId);
+    if (typeof match === 'undefined') { 
+        return;
+    }
+    match.relayMove(playerId, move);
+}
+
+function getMatch(playerId) {
     let match = matches.find((m) => {
         return m.playerOne.id === playerId || m.playerTwo.id === playerId;
     });
-    match.relayMove(playerId, move);
+    return match;
+}
+
+function passTheTurn(playerId) {
+    let match = getMatch(playerId);
+    if (typeof match === 'undefined') { 
+        return;
+    }
+    match.passTheTurn(playerId);
 }
 
 console.log("The WebSocket server is running on port 8080");

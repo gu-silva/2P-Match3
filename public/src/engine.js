@@ -9,41 +9,44 @@ class Engine {
         window.DEBUG = {boardHist:[], buffer: {}, moveHist: []};
     }
 
-    newGame() {
+    newGame() {        
         DomHandler.createPlayerPanels();
         DomHandler.buildBoard(Engine.handleClick);    
         DomHandler.cleanProgress();
         DomHandler.updatePlayersInfo();
+        DomHandler.playSong();
         document.getElementById("btn-play-again").addEventListener("click", Engine.playAgain);
         let state = window.STATE;
+        clearInterval(state.turnInterval);
         state.clearState();
         if (state.isAgainstRobot()) {
             DomHandler.endTurn();
             CyBorg.makeMove((move) => {
                 Engine.consolidateMove(move);
-                DomHandler.startTurn();
             });
         } else {
-            state.getWebSocket().addEventListener('message', this.eventListener);
+            state.getWebSocket().addEventListener('message', Engine.eventListener);
         }
     }
-    eventListener(event) {
+    static eventListener(event) {
         let state = window.STATE;
         let message = Message.decode(event.data);
         let header = message.header;
         let body = message.body;    
         switch(header.type) {
             case Message.TYPES.startTurn:
-                DomHandler.startTurn();
-                state.startTurn();
+                Engine.startTurn();
                 break;
             case Message.TYPES.waitOpponentMove:
                 DomHandler.endTurn();
                 break;
             case Message.TYPES.opponentMove:
-                Engine.consolidateMove(body.move)
-                DomHandler.startTurn();
-                console.log(Referee.findAllMoves());
+                // In case opponent didn't pass the move.
+                if (!body.move.pass) {
+                    Engine.consolidateMove(body.move)
+                } else {
+                    Engine.startTurn();
+                }
                 break;
             case Message.TYPES.waitingInTheRoom:
                 DomHandler.showWaitingOpponentPanel();
@@ -65,6 +68,9 @@ class Engine {
         }
 
     }
+    
+    static countDownTimer = -1;
+
     static handleClick(e) {
         let state = window.STATE;
         if (state.isProcessing() || !state.isMyTurn()) {
@@ -111,11 +117,14 @@ class Engine {
             }, 500);            
         } else {
             if (state.isMyTurn()) {
+                clearInterval(state.turnInterval);
                 if (!state.isAgainstRobot()) {
                     Engine.sendMove(move);    
                 }
             }            
-            Referee.detonateEligibleBomb();
+            if (Referee.detonateEligibleBomb()) {
+                DomHandler.playBombSoundFx();
+            }
             board.killEligibleTiles();
             Engine.reorderTiles(() => {
                 if (Referee.didWin()) {
@@ -123,19 +132,10 @@ class Engine {
                     DomHandler.showPostGameMessage(state.isMyTurn());
                     return;
                 }
-                Referee.increaseBombsAge();
-
                 if (state.isMyTurn()) {
-                    state.finishTurn();
-                    if(state.isAgainstRobot()) {
-                        DomHandler.endTurn();
-                        CyBorg.makeMove((move) => {
-                            Engine.consolidateMove(move);
-                            DomHandler.startTurn();
-                        });
-                    }
+                    Engine.finishTurn();
                 } else {
-                    state.startTurn();
+                    Engine.startTurn();
                 }
 
                 state.stopProcessing();
@@ -191,13 +191,52 @@ class Engine {
     }
     static playAgain() {
         let state = window.STATE;
-        state.setPlayingAgainstRobot(false);
+        if (state.isAgainstRobot()) {
+            state.setPlayingAgainstRobot(false);
+            state.getWebSocket().addEventListener("message", Engine.eventListener);
+        }
+        
         let message = Message.playerMessage(state.getPlayerId(), Message.TYPES.joinMatch);
         message.body.board = state.getBoard().getMetaBoard();
         state.getWebSocket().send(message.encode());
         DomHandler.cleanBoard();
         DomHandler.cleanProgress();
         DomHandler.hidePlayerPanels();
+    }
+    static timeout() {
+        let state = window.STATE;
+        state.turnInterval = setInterval(() => {
+            DomHandler.tickTimeBar();
+            if (state.timeLeft < 1) {
+                clearInterval(state.turnInterval);
+                Engine.finishTurn();
+                let message = Message.playerMessage(state.playerId, Message.TYPES.passTheTurn);        
+                state.getWebSocket().send(message.encode());
+                return;
+            }
+            state.timeLeft--;
+            console.log(`there's ${ state.timeLeft } seconds left.`)
+        }, 1000);
+    }
+    static startTurn() {
+        let state = window.STATE;
+        state.startTurn();
+        Referee.increaseBombsAge();
+        DomHandler.startTurn();
+        Engine.timeout();
+    }
+    static finishTurn() {
+        let state = window.STATE;
+        state.finishTurn();
+        Referee.increaseBombsAge();
+        if(state.isAgainstRobot()) {
+            DomHandler.endTurn();
+            CyBorg.makeMove((move) => {
+                Engine.consolidateMove(move);
+            });
+        } else {
+
+        }
     }
 }
 
