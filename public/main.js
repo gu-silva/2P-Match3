@@ -7,8 +7,8 @@ import { CyBorg } from "./src/cyBorg.js";
 const ENGINE = new Engine();
 
 let nickname = "";
-//var host = location.origin.replace(/^http/, 'ws');
-var host = "ws://127.0.0.1:3000"
+var host = location.origin.replace(/^http/, 'ws');
+//var host = "ws://127.0.0.1:3000"
 let ws = new WebSocket(host);
 let keepAliveInterval = -1;
 
