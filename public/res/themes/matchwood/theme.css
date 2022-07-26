@@ -1,7 +1,20 @@
-body {
+
+
+body, ::backdrop {
   background-image: url("img/bg.png");
   background-repeat: repeat-x;
-  background-size: contain;
+}
+
+@media (min-width: 768px) {
+  body, ::backdrop {
+    background-size: contain;
+  }
+}
+
+@media (max-width: 767px) {
+  body, ::backdrop {
+    background-size: cover;
+  }
 }
 
 .tile-0 {

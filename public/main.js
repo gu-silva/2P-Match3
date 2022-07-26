@@ -9,9 +9,9 @@ const ENGINE = new Engine();
 let nickname = "";
 var host = location.origin.replace(/^http/, 'ws');
 //var host = "ws://127.0.0.1:3000"
+//var host = "ws://192.168.0.105:3000"
 let ws = new WebSocket(host);
 let keepAliveInterval = -1;
-
 ws.addEventListener('message', eventListener);
 ws.addEventListener("open", () => {    
     console.log("We are connected, registering...");
@@ -22,6 +22,7 @@ ws.addEventListener("open", () => {
 });
 
 document.getElementById("btn-play").addEventListener("click", () => {
+    
     let txtNickname = document.getElementById("txt-nickname");
     if (typeof txtNickname.value === 'undefined' || txtNickname.value.length === 0) {
         txtNickname.classList.add("txt-error");
@@ -87,3 +88,4 @@ function leaveWaitingRoom() {
     let message = Message.playerMessage(state.getPlayerId(), Message.TYPES.leaveWaitingRoom);
     state.getWebSocket().send(message.encode());
 }
+  

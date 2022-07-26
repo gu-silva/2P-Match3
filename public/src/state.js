@@ -6,7 +6,6 @@ class State {
     constructor(playerId, playerName, ws) {
         this.clearState();
         this.board = new Board();
-        //this.generateValidBoard();
         this.playerId = playerId;
         this.playerName = playerName;    
         this.ws = ws;
@@ -20,7 +19,9 @@ class State {
         this.myTurn = false;
         this.score = new Score();
         this.currentTile = undefined;
-        this.clickedTile = undefined;
+        this.clickedTile = undefined;    
+        this.startingTouch = undefined;
+        this.movingTouch = undefined;
         this.opponentName = undefined;
     }
 
@@ -113,6 +114,22 @@ class State {
     }
     setPlayingAgainstRobot(value) {
         this.playingAgainstRobot = value;
+    }
+    getStartingTouch() {
+        return this.startingTouch;
+    }
+    getMovingTouch() {
+        return this.movingTouch;
+    }
+    setStartingTouch(touches) {
+        this.startingTouch = { x: touches.clientX, y: touches.clientY };
+    }
+    setMovingTouch(touches) {
+        this.movingTouch = { x: touches.clientX, y: touches.clientY };
+    }
+    cleanTouches() {
+        this.startingTouch = undefined;
+        this.movingTouch = undefined;
     }
 }
 

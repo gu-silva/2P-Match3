@@ -34,6 +34,7 @@ class DomHandler {
             let domTile = this.createTile(params.x, params.y, tile.value, handleClick);
             container.appendChild(domTile);
         });
+        
         DomHandler.createTimeBar();
     }
 
@@ -70,13 +71,13 @@ class DomHandler {
                 currTime--;
                 time.innerHTML = currTime;
                 time.style.width = (100*currTime)/20 + "%";
-                if (currTime <= 10) {
-                    for (let i=0; i < 5; i++) {
-                        let randomX = Math.floor(Math.random() * (Config.w - 1));
-                        let randomY = Math.floor(Math.random() * (Config.h - 1));
-                        document.getElementById(`${randomX}_${randomY}`).classList.add("shake");
-                    }
-                }
+                //if (currTime <= 10) {
+                //    for (let i=0; i < 5; i++) {
+                //        let randomX = Math.floor(Math.random() * (Config.w - 1));
+                //        let randomY = Math.floor(Math.random() * (Config.h - 1));
+                //        document.getElementById(`${randomX}_${randomY}`).classList.add("shake");
+                //    }
+                //}
             }
         }
     }
@@ -89,6 +90,10 @@ class DomHandler {
             childTile.classList.add(TILE_CLASS);
             childTile.classList.add(Config.avatars[value]);
             childTile.addEventListener('click', handleClick);
+            childTile.addEventListener('touchstart', (e) => { DomHandler.swipe(e, handleClick); })
+            childTile.addEventListener('touchmove', (e) => { DomHandler.swipe(e, handleClick); })
+            childTile.addEventListener('touchend', (e) => { DomHandler.swipe(e, handleClick); })
+
             childTile.id = this.tileId(x, y);
             childTile.setAttribute("x", x);
             childTile.setAttribute("y", y);
@@ -272,7 +277,7 @@ class DomHandler {
         progress.id = `${prefix}-progress`;
         progressWrapper.append(progress);
 
-        let catchPhrase = document.createElement("p");
+        let catchPhrase = document.createElement("span");
         catchPhrase.id = `${prefix}-catch-phrase`;
 
         playerCard.append(name);
@@ -388,6 +393,51 @@ class DomHandler {
     static playBombSoundFx() {
         let popSoundFx = new Audio("./res/themes/matchwood/sound/double_pop.wav");
         popSoundFx.play();
+    }
+    static swipe(event, handleClick) {
+        const state = window.STATE;
+        const touches = event.touches[0];
+        const minMove = 50; 
+        switch(event.type) {
+            case "touchstart":
+                state.setStartingTouch(touches);
+                handleClick(event);
+                break;
+            case "touchmove":
+                state.setMovingTouch(touches);
+                break;
+            case "touchend":
+                let starting = state.getStartingTouch();
+                let moving = state.getMovingTouch();
+                if (typeof starting === "undefined" || typeof moving === "undefined") {
+                    state.cleanClicks();
+                    state.cleanTouches();
+                    return;
+                }
+                let target = undefined;
+                let numDirections = 0;
+                if ((starting.x + minMove) < moving.x && parseInt(state.clickedTile.y) + 1 < Config.w) {
+                    target = DomHandler.getTile(state.clickedTile.x, parseInt(state.clickedTile.y) + 1);
+                    numDirections++;
+                } else if ((starting.x - minMove) > moving.x && parseInt(state.clickedTile.y) > 0) {
+                    target = DomHandler.getTile(state.clickedTile.x, parseInt(state.clickedTile.y) - 1);
+                    numDirections++;
+                }
+                
+                if ((starting.y + minMove) < moving.y && parseInt(state.clickedTile.x) + 1 < Config.h) {
+                    target = DomHandler.getTile(parseInt(state.clickedTile.x) + 1, state.clickedTile.y);
+                    numDirections++;
+                } else if ((starting.y - minMove) > moving.y && parseInt(state.clickedTile.x) > 0) {
+                    target = DomHandler.getTile(parseInt(state.clickedTile.x) - 1, state.clickedTile.y);
+                    numDirections++;
+                }
+                
+                if (typeof target !== "undefined" && numDirections === 1) {
+                    handleClick({ "target": target });
+                }
+                state.cleanTouches();
+                break;
+        }
     }
 }
 export { DomHandler };

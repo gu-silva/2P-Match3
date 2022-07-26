@@ -13,7 +13,7 @@ class Config {
     //static webSocketAddress = "ws://192.168.0.105:8080";
     //static webSocketAddress = "ws://192.168.0.105:3000";
     static textOpponentsTurn = "Seu oponente está pensando...";
-    static textYourTurn = "Agora é sua vez, faça seu movimento!";
+    static textYourTurn = "Agora é sua vez!";
     static robotName = "CyBorg";
     static soundFx = true;
     static music = true;

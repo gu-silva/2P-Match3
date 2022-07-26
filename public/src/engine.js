@@ -9,7 +9,8 @@ class Engine {
         window.DEBUG = {boardHist:[], buffer: {}, moveHist: []};
     }
 
-    newGame() {        
+    newGame() {
+        this.requestFullScreen();
         DomHandler.createPlayerPanels();
         DomHandler.buildBoard(Engine.handleClick);    
         DomHandler.cleanProgress();
@@ -26,6 +27,26 @@ class Engine {
             });
         } else {
             state.getWebSocket().addEventListener('message', Engine.eventListener);
+        }
+    }
+    requestFullScreen() {
+        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (!isMobile) {
+            return;
+        }
+        let el = document.body;  
+        // Supports most browsers and their versions.
+        let requestMethod = el.requestFullScreen || el.webkitRequestFullScreen 
+        || el.mozRequestFullScreen || el.msRequestFullScreen;
+        if (requestMethod) {
+            // Native full screen.
+            requestMethod.call(el);  
+        } else if (typeof window.ActiveXObject !== "undefined") {  
+            // Older IE.
+            let wscript = new ActiveXObject("WScript.Shell");
+            if (wscript !== null) {
+                wscript.SendKeys("{F11}");
+            }
         }
     }
     static eventListener(event) {
@@ -61,7 +82,6 @@ class Engine {
                 DomHandler.updatePlayersInfo();
                 DomHandler.showPlayerPanels();
                 DomHandler.buildBoard(Engine.handleClick);
-                console.log(Referee.findAllMoves());
                 break;
             default:
                 console.log('Unknown message');
@@ -73,7 +93,7 @@ class Engine {
 
     static handleClick(e) {
         let state = window.STATE;
-        if (state.isProcessing() || !state.isMyTurn()) {
+        if (state.isProcessing() || !state.isMyTurn()) {            
             return;
         }
         state.startProcessing();
@@ -83,12 +103,16 @@ class Engine {
             state.stopProcessing();  
             return;
         }
+        console.log('1');
         let valid = Referee.isMovementValid({x, y});
 	    if (!valid) {
+            console.log(x + " - " + y);
+
             state.cleanClicks();
 		    state.stopProcessing();
 		    return;
 	    }
+        console.log('is valid');
         let move = {firstClicked: state.clickedTile, secondClicked: state.currentTile};
         Engine.consolidateMove(move);
     }
@@ -215,7 +239,6 @@ class Engine {
                 return;
             }
             state.timeLeft--;
-            console.log(`there's ${ state.timeLeft } seconds left.`)
         }, 1000);
     }
     static startTurn() {
